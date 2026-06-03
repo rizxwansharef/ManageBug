@@ -1,0 +1,30 @@
+<div class="auth-shell">
+  <div class="auth-visual d-none d-lg-flex">
+    <div class="auth-visual__brand">ManageBug</div>
+  </div>
+
+  <div class="auth-panel">
+    <div class="auth-panel__topbar">
+      <span>Already have an account?</span>
+      <%= link_to "Sign in", new_user_session_path %>
+    </div>
+
+    <div class="auth-card">
+      <h2>Join Us!</h2>
+      <p class="auth-subtitle">To begin this journey, tell us what type of account you'd be opening</p>
+      <div class="role-grid role-grid--large">
+        <% [["manager", "Manager", "Signup as a manager to manage the task and bugs."], ["developer", "Developer", "Signup as a developer to assign the relevant task to QA."], ["qa", "QA", "Signup as a QA to create the bugs and report in tasks."]].each do |value, label, description| %>
+          <%= link_to new_user_registration_path(role: value), class: "role-card" do %>
+            <span class="role-card__icon"><%= label.first %></span>
+            <span class="role-card__body">
+              <span class="role-card__title"><%= label %></span>
+              <span class="role-card__text"><%= description %></span>
+            </span>
+            <span class="role-card__arrow">&rarr;</span>
+          <% end %>
+        <% end %>
+      </div>
+
+    </div>
+  </div>
+</div>
