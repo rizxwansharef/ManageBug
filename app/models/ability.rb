@@ -13,7 +13,7 @@ class Ability
       can :read, Bug do |bug|
         bug.project.manager_id == user.id
       end
-      cannot [:update, :destroy], Bug
+      cannot [:create, :update, :destroy], Bug
 
 
 

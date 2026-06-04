@@ -1,0 +1,31 @@
+<%= form_with(model: bug, local: true) do |f| %>
+	<% if bug.errors.any? %>
+		<div class="alert alert-danger">
+			<ul>
+				<% bug.errors.full_messages.each do |msg| %>
+					<li><%= msg %></li>
+				<% end %>
+			</ul>
+		</div>
+	<% end %>
+
+	<div class="mb-3">
+		<%= f.label :title %>
+		<%= f.text_field :title, class: 'form-control' %>
+	</div>
+
+	<div class="mb-3">
+		<%= f.label :description %>
+		<%= f.text_area :description, class: 'form-control', rows: 6 %>
+	</div>
+
+	<div class="mb-3">
+		<%= f.label :project_id, 'Project' %>
+		<%= f.collection_select :project_id, Project.all, :id, :name, { prompt: 'Select project' }, { class: 'form-select' } %>
+	</div>
+
+	<div class="mb-3">
+		<%= f.submit class: 'btn btn-primary' %>
+		<%= link_to 'Back', bugs_path, class: 'btn btn-link' %>
+	</div>
+<% end %>

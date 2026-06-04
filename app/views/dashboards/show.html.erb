@@ -1,2 +1,11 @@
-<h1>Dashboards#show</h1>
-<p>Find me in app/views/dashboards/show.html.erb</p>
+<%= render 'shared/dashboard_nav' %>
+
+<div class="container">
+	<% if manager? %>
+		<%= render 'dashboards/manager_dashboard' %>
+	<% elsif developer? %>
+		<%= render 'dashboards/developer_dashboard' %>
+	<% elsif qa? %>
+		<%= render 'dashboards/qa_dashboard' %>
+	<% end %>
+</div>

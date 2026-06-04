@@ -1,0 +1,27 @@
+<%= form_with(model: project, local: true) do |f| %>
+	<% if project.errors.any? %>
+		<div class="alert alert-danger">
+			<h4>There were errors saving the project</h4>
+			<ul>
+				<% project.errors.full_messages.each do |msg| %>
+					<li><%= msg %></li>
+				<% end %>
+			</ul>
+		</div>
+	<% end %>
+
+	<div class="mb-3">
+		<%= f.label :name %>
+		<%= f.text_field :name, class: 'form-control' %>
+	</div>
+
+	<div class="mb-3">
+		<%= f.label :description %>
+		<%= f.text_area :description, class: 'form-control', rows: 4 %>
+	</div>
+
+	<div class="mb-3">
+		<%= f.submit class: 'btn btn-primary' %>
+		<%= link_to 'Back', projects_path, class: 'btn btn-link' %>
+	</div>
+<% end %>

@@ -1,0 +1,19 @@
+<%= render 'shared/dashboard_nav' %>
+
+<div class="container">
+	<h1><%= @bug.title %></h1>
+	<p class="text-muted">Project: <%= @bug.project&.name %> • Status: <%= @bug.status %></p>
+
+	<div class="mb-4">
+		<p><%= simple_format(@bug.description) %></p>
+	</div>
+
+	<div>
+		<% if can? :update, @bug %>
+			<%= link_to 'Edit', edit_bug_path(@bug), class: 'btn btn-outline-secondary me-2' %>
+		<% end %>
+		<% if can? :destroy, @bug %>
+			<%= link_to 'Delete', bug_path(@bug), method: :delete, data: { confirm: 'Delete bug?' }, class: 'btn btn-danger' %>
+		<% end %>
+	</div>
+</div>

@@ -1,0 +1,27 @@
+<%= render 'shared/dashboard_nav' %>
+
+<div class="container">
+	<h1>Projects</h1>
+	<div class="mb-3">
+		<%= link_to 'New Project', new_project_path, class: 'btn btn-primary' %>
+	</div>
+
+	<% if @projects.any? %>
+		<div class="list-group">
+			<% @projects.each do |project| %>
+				<div class="list-group-item d-flex justify-content-between align-items-center">
+					<div>
+						<h5 class="mb-1"><%= link_to project.name, project_path(project) %></h5>
+						<p class="mb-0 text-muted"><%= truncate(project.description, length: 120) %></p>
+					</div>
+					<div>
+						<%= link_to 'Edit', edit_project_path(project), class: 'btn btn-sm btn-outline-secondary me-2' if manager? && project.manager_id == current_user.id %>
+						<%= link_to 'Delete', project_path(project), method: :delete, data: { confirm: 'Delete project?' }, class: 'btn btn-sm btn-danger' if manager? && project.manager_id == current_user.id %>
+					</div>
+				</div>
+			<% end %>
+		</div>
+	<% else %>
+		<p>No projects found.</p>
+	<% end %>
+</div>
