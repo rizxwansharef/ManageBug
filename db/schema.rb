@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_02_112039) do
+ActiveRecord::Schema[8.1].define(version: 2026_06_04_122640) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -55,6 +55,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_02_112039) do
     t.index ["assignee_qa_id"], name: "index_bugs_on_assignee_qa_id"
     t.index ["project_id"], name: "index_bugs_on_project_id"
     t.index ["reporter_id"], name: "index_bugs_on_reporter_id"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "message", null: false
+    t.boolean "read", default: false
+    t.integer "recipient_id", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "project_assignments", force: :cascade do |t|

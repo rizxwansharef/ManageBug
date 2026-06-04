@@ -1,0 +1,18 @@
+<div class="container mt-4">
+    <h1>Notifications</h1>
+        <ul class="list-group">
+                <% @notifications.each do |notification| %>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <% if notification.read==false %>
+                        <%= notification.message %>
+                    
+                    <% end %>
+                    <span class="badge bg-primary rounded-pill"><%= time_ago_in_words(notification.created_at) %> ago</span>
+                </li>
+                
+            <% end %>
+        </ul>
+
+     <%=link_to 'Mark all as read', mark_as_read_notification_path(current_user), class: 'btn btn-secondary mt-3' %>
+</div>
+

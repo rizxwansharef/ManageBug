@@ -16,4 +16,9 @@ Rails.application.routes.draw do
       patch 'change_status'
     end
   end
+  resources :notifications do
+    member do
+      patch 'mark_as_read'
+    end
+  end
 end

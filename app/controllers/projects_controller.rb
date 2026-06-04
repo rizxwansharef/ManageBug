@@ -23,7 +23,14 @@ class ProjectsController < ApplicationController
     @project.manager = current_user
 
     if @project.save
-      redirect_to @project, notice: 'Project was successfully created.'
+        @project.users.each do |user| 
+            skip if user == current_user
+          Notification.create(
+            recipient_id: user.id,
+            message: "You have been added to the project '#{@project.name}' by #{current_user.name}.",
+          )
+        end
+          redirect_to @project, notice: 'Project was successfully created.'
     else
       render :new
     end
@@ -35,6 +42,13 @@ class ProjectsController < ApplicationController
 
   def update
     if @project.update(project_params)
+        @project.users.each do |user| 
+            skip if user == current_user
+            Notification.create(
+                recipient_id: user.id,
+                message: "The project '#{@project.name}' has been updated by #{current_user.name}.",
+            )
+        end
       redirect_to @project, notice: 'Project was successfully updated.'
     else
       @users = User.order(:name)
@@ -50,7 +64,7 @@ class ProjectsController < ApplicationController
   def assign_users
     @project = Project.find(params[:id])
   end
-  
+
 
   private
 

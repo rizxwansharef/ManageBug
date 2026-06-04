@@ -23,6 +23,10 @@ class BugsController < ApplicationController
     @bug.status = 'open'
     @bug.reporter = current_user
     if @bug.save
+        Notification.create(
+          recipient_id: @bug.project.manager.id,
+          message: "A new bug has been created in your project '#{@bug.project.name}' by #{current_user.name}.",
+        )
       redirect_to @bug, notice: 'Bug was successfully created.'
     else
       render :new
@@ -48,11 +52,19 @@ class BugsController < ApplicationController
   def assign_developer
     @bug = Bug.find(params[:id])
     @developers = User.where(role: 'developer', projects: { id: @bug.project_id }).distinct
+    Notification.create(
+        recipient_id: @bug.asignee_dev_id,
+        message: "You have been assigned to a new bug '#{@bug.title}' in the project  by #{current_user.name}.",
+      )
   end   
 
   def assign_qa
     @bug = Bug.find(params[:id])  
     @qas = User.where(role: 'qa', projects: { id: @bug.project_id }).distinct
+    Notification.create(
+        recipient_id: @bug.asignee_qa_id,
+        message: "You have been assigned to a new bug '#{@bug.title}' in the project  by #{current_user.name}.",
+      )
   end
 
   def change_status
@@ -61,6 +73,10 @@ class BugsController < ApplicationController
     elsif @bug.status == 'in_progress' && @bug.assignee_qa_id.present?
       @bug.update(status: 'resolved')
     end
+    Notification.create(
+      recipient_id: @bug.reporter_id,
+      message: "The status of your reported bug '#{@bug.title}' has been changed to '#{@bug.status}'.",
+    )   
     redirect_to @bug, notice: 'Bug status was successfully updated.'
   end
 
