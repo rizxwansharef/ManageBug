@@ -9,5 +9,11 @@ Rails.application.routes.draw do
   get "home", to: "pages#home"
   root "pages#home"
   resources :projects 
-  resources :bugs
+  resources :bugs do
+    member do
+      get 'assign_developer'
+      get 'assign_qa'
+      patch 'change_status'
+    end
+  end
 end

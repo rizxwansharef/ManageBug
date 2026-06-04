@@ -1,4 +1,6 @@
 class ProjectsController < ApplicationController
+  before_action :set_project, only: %i[show edit update destroy]
+
   def index
     if manager?
       @projects = Project.where(manager_id: current_user.id)
@@ -8,11 +10,12 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    @project = Project.find(params[:id])
+    @users = User.order(:name)
   end
 
   def new
     @project = Project.new
+    @users = User.order(:name)
   end
 
   def create
@@ -27,27 +30,35 @@ class ProjectsController < ApplicationController
   end
 
   def edit
-    @project = Project.find(params[:id])
+    @users = User.order(:name)
   end
 
   def update
-    @project = Project.find(params[:id])
     if @project.update(project_params)
       redirect_to @project, notice: 'Project was successfully updated.'
     else
+      @users = User.order(:name)
       render :edit
     end
   end
 
   def destroy
-    @project = Project.find(params[:id])
     @project.destroy
     redirect_to projects_path, notice: 'Project was successfully deleted.'
   end
 
+  def assign_users
+    @project = Project.find(params[:id])
+  end
+  
+
   private
 
+  def set_project
+    @project = Project.find(params[:id])
+  end
+
   def project_params
-    params.require(:project).permit(:name, :description, :avatar)
+    params.require(:project).permit(:name, :description, :avatar, user_ids: [])
   end
 end

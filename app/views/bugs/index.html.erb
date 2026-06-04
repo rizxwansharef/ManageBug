@@ -3,8 +3,9 @@
 <div class="container">
 	<h1>Bugs</h1>
 	<div class="mb-3">
+        <% if can? :create, Bug %>  
 			<%= link_to 'New Bug', new_bug_path, class: 'btn btn-primary' %>
-		
+		<% end %>
 	</div>
 
 	<% if params[:project_id].present? %>
@@ -25,7 +26,7 @@
 							<%= link_to 'Edit', edit_bug_path(bug), class: 'btn btn-sm btn-outline-secondary me-2' %>
 						<% end %>
 						<% if can? :destroy, bug %>
-							<%= link_to 'Delete', bug_path(bug), method: :delete, data: { confirm: 'Delete bug?' }, class: 'btn btn-sm btn-danger' %>
+							<%= link_to 'Delete', bug_path(bug), data: { turbo_method: :delete, turbo_confirm: 'Delete bug?' }, class: 'btn btn-sm btn-danger' %>
 						<% end %>
 					</div>
 				</div>

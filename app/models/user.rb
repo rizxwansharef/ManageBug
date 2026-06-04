@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   validates :name, presence: true
-  has_many :projects, through: :project_assignments
   has_many :project_assignments
+  has_many :projects, through: :project_assignments
   has_many :reported_bugs, class_name: "Bug", foreign_key: "reporter_id"
   has_many :qa_assignments, class_name: "Bug", foreign_key: "assignee_qa_id"
   has_many :dev_assignments, class_name: "Bug", foreign_key: "assignee_dev_id"

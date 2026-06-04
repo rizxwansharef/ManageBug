@@ -3,17 +3,37 @@
 <div class="container">
 	<h1><%= @bug.title %></h1>
 	<p class="text-muted">Project: <%= @bug.project&.name %> • Status: <%= @bug.status %></p>
+	<p class="text-muted">QA: <%= @bug.assignee_qa&.name %> • Developer: <%= @bug.assignee_dev&.name %></p>
 
 	<div class="mb-4">
 		<p><%= simple_format(@bug.description) %></p>
 	</div>
 
+	<% if @bug.screenshot.attached? %>
+		<div class="mb-4">
+			<h5>Screenshot</h5>
+			<%= image_tag @bug.screenshot, class: 'img-fluid rounded', style: 'max-height:320px;object-fit:contain;' %>
+		</div>
+	<% end %>
+
 	<div>
+        <% if can? :change_status, @bug %>
+            <% if @bug.status == 'open' %>
+                <%= link_to 'Mark as In Progress', change_status_bug_path(@bug, status: 'in_progress'), method: :patch, class: 'btn btn-outline-primary me-2' %>
+                <%= link_to 'Mark as Closed', change_status_bug_path(@bug, status: 'closed'), method: :patch, class: 'btn btn-outline-success me-2' %>
+            <% elsif @bug.status == 'in_progress' %>
+                <%= link_to 'Mark as Open', change_status_bug_path(@bug, status: 'open'), method: :patch, class: 'btn btn-outline-secondary me-2' %>
+                <%= link_to 'Mark as Closed', change_status_bug_path(@bug, status: 'closed'), method: :patch, class: 'btn btn-outline-success me-2' %>
+            <% elsif @bug.status == 'closed' %>
+                <%= link_to 'Mark as Open', change_status_bug_path(@bug, status: 'open'), method: :patch, class: 'btn btn-outline-secondary me-2' %>
+                <%= link_to 'Mark as In Progress', change_status_bug_path(@bug, status: 'in_progress'), method: :patch, class: 'btn btn-outline-primary me-2' %>
+            <% end %>
+        <% end %>
 		<% if can? :update, @bug %>
 			<%= link_to 'Edit', edit_bug_path(@bug), class: 'btn btn-outline-secondary me-2' %>
 		<% end %>
 		<% if can? :destroy, @bug %>
-			<%= link_to 'Delete', bug_path(@bug), method: :delete, data: { confirm: 'Delete bug?' }, class: 'btn btn-danger' %>
+			<%= link_to 'Delete', bug_path(@bug), data: { turbo_method: :delete, turbo_confirm: 'Delete bug?' }, class: 'btn btn-danger' %>
 		<% end %>
 	</div>
 </div>

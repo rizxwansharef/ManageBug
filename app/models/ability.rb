@@ -6,7 +6,6 @@ class Ability
   def initialize(user)
     return unless user.persisted? # if the user is not logged in, return
 
-    user_project_ids = user.projects.select(:id)
 
     if user.role == 'manager'
       can :manage, Project, manager_id: user.id
@@ -22,7 +21,7 @@ class Ability
         project.users.include?(user)
       end
 
-      can :create, Bug, project_id: user_project_ids
+      can :create, Bug, project_id: user.project_ids
       can [:update, :destroy], Bug do |bug|
         bug.reporter_id == user.id
       end
@@ -38,7 +37,7 @@ class Ability
         project.users.include?(user)
       end
 
-      can :change_status, Bug, project_id: user_project_ids
+      can :change_status, Bug, assignee_dev_id: user.id
 
       cannot [:create, :destroy], Bug
       cannot [:create, :update, :destroy], Project

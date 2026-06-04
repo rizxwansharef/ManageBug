@@ -1,4 +1,4 @@
-<%= form_with(model: bug, local: true) do |f| %>
+<%= form_with(model: bug, local: true, multipart: true) do |f| %>
 	<% if bug.errors.any? %>
 		<div class="alert alert-danger">
 			<ul>
@@ -21,7 +21,29 @@
 
 	<div class="mb-3">
 		<%= f.label :project_id, 'Project' %>
-		<%= f.collection_select :project_id, Project.all, :id, :name, { prompt: 'Select project' }, { class: 'form-select' } %>
+		<%= f.collection_select :project_id, current_user.projects, :id, :name, { prompt: 'Select project' }, { class: 'form-select' } %>
+
+	</div>
+
+	<div class="mb-3">
+
+		<%= f.label :assignee_qa_id, 'QA assignee' %>
+		<%= f.collection_select :assignee_qa_id, @users ||User.where(role: 'qa')|| User.where(project_id: user.projects.pluck(:id)) || User.none, :id, :name, { prompt: 'Select QA' }, { class: 'form-select' } %>
+	</div>
+
+	<div class="mb-3">
+		<%= f.label :assignee_dev_id, 'Developer assignee' %>
+		<%= f.collection_select :assignee_dev_id, @users || User.where(role: 'developer')|| User.where(project_id: owned_projects.pluck(:id)) || User.none, :id, :name, { prompt: 'Select developer' }, { class: 'form-select' } %>
+	</div>
+
+	<div class="mb-3">
+		<%= f.label :screenshot, 'Bug screenshot' %>
+		<%= f.file_field :screenshot, class: 'form-control' %>
+		<% if bug.screenshot.attached? %>
+			<div class="mt-2">
+				<%= image_tag bug.screenshot, class: 'rounded', style: 'max-width:200px;max-height:150px;object-fit:cover;' %>
+			</div>
+		<% end %>
 	</div>
 
 	<div class="mb-3">

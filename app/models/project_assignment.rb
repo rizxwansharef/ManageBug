@@ -1,4 +1,4 @@
-class Project_assignment < ApplicationRecord
+class ProjectAssignment < ApplicationRecord
     belongs_to :user
     belongs_to :project
 end

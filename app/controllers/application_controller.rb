@@ -28,14 +28,14 @@ class ApplicationController < ActionController::Base
     dashboard_path
   end
   def after_sign_out_path_for(resource)
-    login_path
+    new_user_session_path
   end
 
   protected
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :role])
-    devise_parameter_sanitizer.permit(:account_update, keys: [:name, :role])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :role, :profile_picture])
+    devise_parameter_sanitizer.permit(:account_update, keys: [:name, :role, :profile_picture])
   end
 
 

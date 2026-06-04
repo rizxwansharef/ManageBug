@@ -3,7 +3,9 @@
 <div class="container">
 	<h1>Projects</h1>
 	<div class="mb-3">
+        <% if can? :create, Project %>
 		<%= link_to 'New Project', new_project_path, class: 'btn btn-primary' %>
+        <% end %>
 	</div>
 
 	<% if @projects.any? %>
@@ -16,7 +18,7 @@
 					</div>
 					<div>
 						<%= link_to 'Edit', edit_project_path(project), class: 'btn btn-sm btn-outline-secondary me-2' if manager? && project.manager_id == current_user.id %>
-						<%= link_to 'Delete', project_path(project), method: :delete, data: { confirm: 'Delete project?' }, class: 'btn btn-sm btn-danger' if manager? && project.manager_id == current_user.id %>
+						<%= link_to 'Delete', project_path(project), data: { turbo_method: :delete, turbo_confirm: 'Delete project?' }, class: 'btn btn-sm btn-danger' if manager? && project.manager_id == current_user.id %>
 					</div>
 				</div>
 			<% end %>
