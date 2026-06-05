@@ -1,38 +1,56 @@
 <%= render 'shared/dashboard_nav' %>
 
-<div class="container">
-	<h1><%= @project.name %></h1>
-	<p class="text-muted">Managed by: <%= @project.manager&.name %></p>
-
+<div class="container app-shell py-4">
 	<% if @project.avatar.attached? %>
 		<div class="mb-3">
 			<%= image_tag @project.avatar, class: 'rounded', style: 'width:120px;height:120px;object-fit:cover;' %>
 		</div>
 	<% end %>
 
-	<div class="mb-4">
-		<p><%= simple_format(@project.description) %></p>
+	<div class="mb-5 text-muted" style="font-size: 1.05rem; line-height: 1.6;">
+		<h2 class="page-heading mb-3"><%= @project.name %></h2>
 	</div>
 
-	<% if @project.users.any? %>
-		<div class="mb-3">
-			<h5>Assigned people</h5>
-			<ul class="list-group">
-				<% @project.users.order(:name).each do |user| %>
-					<li class="list-group-item d-flex justify-content-between align-items-center">
-						<span><%= user.name %> <span class="text-muted">(<%= user.role %>)</span></span>
-						<% if user.profile_picture.attached? %>
-							<%= image_tag user.profile_picture, class: 'rounded-circle', style: 'width:32px;height:32px;object-fit:cover;' %>
-						<% end %>
-					</li>
-				<% end %>
-			</ul>
-		</div>
-	<% end %>
+	<div class="row mb-5 text-muted" style="font-size: 1.05rem; line-height: 1.6; background-color: #f8f9fa; padding: 1.5rem; border-radius: 0.5rem;">
+		<p>Description:</p>
+		<%= simple_format(@project.description) %>
+	</div>
 
-	<div class="mb-3">
-		<%= link_to 'Edit', edit_project_path(@project), class: 'btn btn-outline-secondary me-2' if manager? && @project.manager_id == current_user.id %>
-		<%= link_to 'Delete', project_path(@project), data: { turbo_method: :delete, turbo_confirm: 'Delete project?' }, class: 'btn btn-danger' if manager? && @project.manager_id == current_user.id %>
-		<%= link_to 'View Bugs', bugs_path + "?project_id=#{@project.id}", class: 'btn btn-primary ms-2' %>
+	<div class="row mb-5" style="background-color: #f8f9fa; padding: 1.5rem; border-radius: 0.5rem;">
+		<div class="col-auto me-4">
+			<h5 class="text-uppercase text-muted" style="font-size: 0.8rem; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 0.8rem;">Created by</h5>
+			<% if @project.manager&.profile_picture&.attached? %>
+				<%= image_tag @project.manager.profile_picture, class: 'rounded-circle shadow-sm', style: 'width:48px;height:48px;object-fit:cover;', title: @project.manager.name, data: { bs_toggle: "tooltip" } %>
+			<% else %>
+				<div class="rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width:48px;height:48px; background-color: #d9e3f5; color: #28436f; font-weight: 700;" title="<%= @project.manager&.name %>" data-bs-toggle="tooltip">
+					<%= @project.manager&.name.to_s.first&.upcase || "U" %>
+				</div>
+			<% end %>
+		</div>
+
+		<% if @project.users.any? %>
+			<div class="col">
+				<h5 class="text-uppercase text-muted" style="font-size: 0.8rem; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 0.8rem;">Assigned people</h5>
+				<div class="avatar-stack">
+					<% @project.users.order(:name).each do |user| %>
+						<% if user.profile_picture.attached? %>
+							<div class="avatar-stack__item" style="width: 48px; height: 48px;" title="<%= user.name %>" data-bs-toggle="tooltip">
+								<%= image_tag user.profile_picture, alt: user.name %>
+							</div>
+						<% else %>
+							<div class="avatar-stack__item" style="width: 48px; height: 48px;" title="<%= user.name %>" data-bs-toggle="tooltip">
+								<%= user.name.to_s.first&.upcase || "U" %>
+							</div>
+						<% end %>
+					<% end %>
+				</div>
+			</div>
+		<% end %>
+	</div>
+
+	<div class="mb-3 pt-4 border-top">
+		<%= link_to 'Edit', edit_project_path(@project), class: 'btn btn-outline-secondary app-btn me-2' if manager? && @project.manager_id == current_user.id %>
+		<%= link_to 'Delete', project_path(@project), data: { turbo_method: :delete, turbo_confirm: 'Delete project?' }, class: 'btn btn-outline-danger app-btn me-2' if manager? && @project.manager_id == current_user.id %>
+		<%= link_to 'View Bugs', bugs_path + "?project_id=#{@project.id}", class: 'btn btn-primary app-btn me-2' %>
 	</div>
 </div>

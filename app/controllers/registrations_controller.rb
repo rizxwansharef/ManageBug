@@ -1,11 +1,9 @@
 class RegistrationsController < Devise::RegistrationsController
-
-
   def role
     sign_out(current_user) if user_signed_in?
   end
 
-  def new 
+  def new
     @selected_role = params[:role]
     super
   end
@@ -14,6 +12,4 @@ class RegistrationsController < Devise::RegistrationsController
     @selected_role = params[:user][:role]
     super
   end
-
-
 end

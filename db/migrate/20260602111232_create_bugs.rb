@@ -11,7 +11,7 @@ class CreateBugs < ActiveRecord::Migration[8.1]
       t.references :reporter, null: false, foreign_key: { to_table: :users }
       t.references :assignee_qa, null: false, foreign_key: { to_table: :users }
       t.references :assignee_dev, null: false, foreign_key: { to_table: :users }
-      
+
       t.timestamps
     end
   end

@@ -4,5 +4,4 @@ class Project < ApplicationRecord
     has_many :bugs, dependent: :destroy
     belongs_to :manager, class_name: "User"
     has_one_attached :avatar
-
 end

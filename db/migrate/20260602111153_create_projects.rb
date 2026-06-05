@@ -8,6 +8,3 @@ class CreateProjects < ActiveRecord::Migration[8.1]
     end
   end
 end
-
-
-

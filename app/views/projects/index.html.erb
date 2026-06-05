@@ -1,29 +1,101 @@
 <%= render 'shared/dashboard_nav' %>
 
-<div class="container">
-	<h1>Projects</h1>
-	<div class="mb-3">
-        <% if can? :create, Project %>
-		<%= link_to 'New Project', new_project_path, class: 'btn btn-primary' %>
-        <% end %>
+<div class="container app-shell py-4" >
+	<div class="dashboard-header d-flex justify-content-between align-items-center mb-4"style="background-color: #f8f9fa;padding: 1.5rem; border-radius: 0.5rem;">
+		<p class="dashboard-subtitle m-0 text-muted">Welcome back, <%= current_user.name %>!</p>
+		<% if can? :create, Project %>
+			<button type="button" class="btn btn-primary app-btn" data-bs-toggle="modal" data-bs-target="#newProjectModal">+ New Task</button>
+		<% end %>
+	</div>
+</div>
+<div class="container app-shell py-4">
+	<div class="projects-header d-flex justify-content-between align-items-center mb-4">
+		<h1 class="projects-title m-0">All Projects</h1>
 	</div>
 
 	<% if @projects.any? %>
-		<div class="list-group">
-			<% @projects.each do |project| %>
-				<div class="list-group-item d-flex justify-content-between align-items-center">
-					<div>
-						<h5 class="mb-1"><%= link_to project.name, project_path(project) %></h5>
-						<p class="mb-0 text-muted"><%= truncate(project.description, length: 120) %></p>
+		<div class="projects-grid">
+			<% @projects.each_with_index do |project, index| %>
+				<% completed_count = project.bugs.where(status: "resolved").count %>
+				<% total_count = project.bugs.count %>
+				<% icons = ['bi-android2', 'bi-camera-video', 'bi-dribbble', 'bi-gitlab', 'bi-box-seam', 'bi-broadcast'] %>
+				<% icon_class = icons[index % icons.length] %>
+				<%= link_to project_path(project), class: "project-card" do %>
+					<div class="project-card__icon-wrap">
+						<% if project.avatar.attached? %>
+							<%= image_tag project.avatar, class: "project-card__icon-image", alt: project.name %>
+						<% else %>
+							<i class="bi <%= icon_class %> project-card__icon-svg"></i>
+						<% end %>
 					</div>
-					<div>
-						<%= link_to 'Edit', edit_project_path(project), class: 'btn btn-sm btn-outline-secondary me-2' if manager? && project.manager_id == current_user.id %>
-						<%= link_to 'Delete', project_path(project), data: { turbo_method: :delete, turbo_confirm: 'Delete project?' }, class: 'btn btn-sm btn-danger' if manager? && project.manager_id == current_user.id %>
-					</div>
-				</div>
+					<h3 class="project-card__title"><%= project.name %></h3>
+					<p class="project-card__summary"><%= truncate(project.description.to_s, length: 68) %></p>
+					<p class="project-card__meta">Task Done: <strong><%= format("%02d", completed_count) %>/<%= format("%02d", total_count) %></strong></p>
+				<% end %>
 			<% end %>
 		</div>
 	<% else %>
-		<p>No projects found.</p>
+		<div class="empty-state">No projects found yet.</div>
 	<% end %>
 </div>
+
+<% if can? :create, Project %>
+	<% assignable_users = User.where.not(role: "manager").order(:name) %>
+	<div class="modal fade" id="newProjectModal" tabindex="-1" aria-labelledby="newProjectModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered app-modal app-modal--project">
+			<div class="modal-content">
+				<div class="modal-header border-0 pb-0">
+					<h2 class="modal-title app-modal__title" id="newProjectModalLabel">Add new Project</h2>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body pt-2">
+					<%= form_with(model: Project.new, url: projects_path, local: true, multipart: true, html: { class: "project-modal-form" }) do |f| %>
+						<div class="project-modal-grid">
+							<div>
+								<div class="mb-3">
+									<%= f.label :name, "Project name", class: "form-label" %>
+									<%= f.text_field :name, class: "form-control app-input", placeholder: "Enter project name" %>
+								</div>
+								<div class="mb-3">
+									<%= f.label :description, "Short details", class: "form-label" %>
+									<%= f.text_area :description, rows: 2, class: "form-control app-input", placeholder: "Enter details here" %>
+								</div>
+								<div class="mb-3">
+									<%= f.label :user_ids, "Assign to", class: "form-label" %>
+									<div class="assign-list">
+										<%= f.collection_check_boxes :user_ids, assignable_users, :id, :name do |user_box| %>
+											<% user = user_box.object %>
+											<label class="assign-list__item">
+												<div class="assign-list__avatar">
+													<% if user.profile_picture.attached? %>
+														<%= image_tag user.profile_picture, alt: user.name %>
+													<% else %>
+														<span><%= user.name.to_s.first&.upcase || "U" %></span>
+													<% end %>
+												</div>
+												<span class="assign-list__name"><%= user.name %></span>
+												<%= user_box.check_box(class: "assign-list__checkbox") %>
+											</label>
+										<% end %>
+									</div>
+								</div>
+							</div>
+							<div>
+								<label class="form-label d-block">Upload logo</label>
+								<label class="upload-logo-box" for="project_avatar">
+									<i class="bi bi-image"></i>
+									<span>Upload logo</span>
+								</label>
+								<%= f.file_field :avatar, class: "d-none", id: "project_avatar" %>
+							</div>
+						</div>
+						<div class="d-flex gap-2 mt-4">
+							<%= f.submit "Add", class: "btn btn-primary app-btn flex-fill" %>
+							<button type="button" class="btn btn-outline-secondary app-btn flex-fill" data-bs-dismiss="modal">Cancel</button>
+						</div>
+					<% end %>
+				</div>
+			</div>
+		</div>
+	</div>
+<% end %>

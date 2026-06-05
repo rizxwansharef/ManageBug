@@ -33,15 +33,22 @@
 	</div>
 
 	<% if manager? %>
-		<div class="mb-3">
-			<%= f.label :user_ids, 'Assigned people' %>
-			<div class="border rounded p-3 bg-light">
-				<%= f.collection_check_boxes :user_ids, User.where.not(role: 'manager')|| User.order(:name), :id, :name do |b| %>
-
-					<div class="form-check">
-						<%= b.check_box class: 'form-check-input' %>
-						<%= b.label class: 'form-check-label' %>
-					</div>
+		<div class="mb-4">
+			<%= f.label :user_ids, 'Assigned people', class: "form-label fw-bold" %>
+			<div class="assign-list shadow-sm">
+				<%= f.collection_check_boxes :user_ids, User.where.not(role: 'manager').order(:name), :id, :name do |b| %>
+					<% user = b.object %>
+					<label class="assign-list__item border-bottom mb-0">
+						<div class="assign-list__avatar">
+							<% if user.profile_picture.attached? %>
+								<%= image_tag user.profile_picture, alt: user.name %>
+							<% else %>
+								<span><%= user.name.to_s.first&.upcase || "U" %></span>
+							<% end %>
+						</div>
+						<span class="assign-list__name"><%= user.name %></span>
+						<%= b.check_box class: 'assign-list__checkbox ms-auto' %>
+					</label>
 				<% end %>
 			</div>
 		</div>

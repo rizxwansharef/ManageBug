@@ -5,10 +5,8 @@ class UserController < ApplicationController
   def show
   end
   def new
-
-  end 
+  end
 
   def create
-
-  end   
+  end
 end

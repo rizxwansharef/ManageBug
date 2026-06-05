@@ -1,14 +1,15 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">
-      
-        ManageBug
+    <a class="navbar-brand fw-bold" href="<%= projects_path %>" style="font-size: 1.5rem; color: #000;">
+      ManageBug
     </a>
 
     <div class="d-flex align-items-center">
-      <%= link_to 'Projects', projects_path, class: 'btn btn-outline-primary me-2' %>
-      <%= link_to 'Bugs', bugs_path, class: 'btn btn-outline-secondary me-3' %>
-      <%= link_to 'Notifications', notifications_path, class: 'btn btn-outline-info me-3' %>
+      <%= link_to 'Projects', projects_path , class: 'me-2 fw-bold', style: 'color: #000; text-decoration: none;padding-right:4rem'; %>
+      <%= link_to 'Bugs', bugs_path, class: 'me-3 fw-bold', style: 'color: #000; text-decoration: none; padding-right:4rem';%>
+      <%= link_to notifications_path, class: 'me-3' do %>
+        <i class="bi bi-bell" style="font-size: 1.2rem; color: #000;"></i>
+      <% end %>
 
       <div class="dropdown">
         <a class="btn btn-light dropdown-toggle d-flex align-items-center" href="#" role="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -30,3 +31,5 @@
     </div>
   </div>
 </nav>
+
+

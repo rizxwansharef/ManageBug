@@ -10,7 +10,11 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    @users = User.order(:name)
+    if set_project && (set_project.manager_id == current_user.id || set_project.users.include?(current_user))
+      @project = set_project
+    else
+      redirect_to projects_path, alert: "Project not found or access denied."
+    end
   end
 
   def new
@@ -23,14 +27,14 @@ class ProjectsController < ApplicationController
     @project.manager = current_user
 
     if @project.save
-        @project.users.each do |user| 
+        @project.users.each do |user|
             skip if user == current_user
           Notification.create(
             recipient_id: user.id,
             message: "You have been added to the project '#{@project.name}' by #{current_user.name}.",
           )
         end
-          redirect_to @project, notice: 'Project was successfully created.'
+          redirect_to projects_path, notice: "Project was successfully created."
     else
       render :new
     end
@@ -42,14 +46,14 @@ class ProjectsController < ApplicationController
 
   def update
     if @project.update(project_params)
-        @project.users.each do |user| 
+        @project.users.each do |user|
             skip if user == current_user
             Notification.create(
                 recipient_id: user.id,
                 message: "The project '#{@project.name}' has been updated by #{current_user.name}.",
             )
         end
-      redirect_to @project, notice: 'Project was successfully updated.'
+      redirect_to @project, notice: "Project was successfully updated."
     else
       @users = User.order(:name)
       render :edit
@@ -58,7 +62,7 @@ class ProjectsController < ApplicationController
 
   def destroy
     @project.destroy
-    redirect_to projects_path, notice: 'Project was successfully deleted.'
+    redirect_to projects_path, notice: "Project was successfully deleted."
   end
 
   def assign_users
