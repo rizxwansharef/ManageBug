@@ -17,6 +17,7 @@ class ProjectsController < ApplicationController
     end
   end
 
+
   def new
     @project = Project.new
     @users = User.order(:name)
@@ -45,18 +46,41 @@ class ProjectsController < ApplicationController
   end
 
   def update
-    if @project.update(project_params)
-        @project.users.each do |user|
-            skip if user == current_user
-            Notification.create(
-                recipient_id: user.id,
-                message: "The project '#{@project.name}' has been updated by #{current_user.name}.",
-            )
-        end
-      redirect_to @project, notice: "Project was successfully updated."
-    else
-      @users = User.order(:name)
-      render :edit
+  submitted_ids = Array(project_params[:user_ids]).map(&:to_i)
+  removed_ids = @project.user_ids - submitted_ids
+
+  if removed_ids.present?
+    blocked_ids = Bug.where(project_id: @project.id)
+                     .where("reporter_id IN (?) OR assignee_qa_id IN (?) OR assignee_dev_id IN (?)", removed_ids, removed_ids, removed_ids)
+                     .pluck(:reporter_id, :assignee_qa_id, :assignee_dev_id)
+                     .flatten.uniq & removed_ids 
+
+    if blocked_ids.present?
+      blocked_names = User.where(id: blocked_ids).pluck(:name).join(", ")
+      return redirect_to edit_project_path(@project), alert: "You can't remove user(s): #{blocked_names} with ongoing bugs.", status: :see_other
+    end
+  end
+
+  if @project.update(project_params)
+    notify_project_users
+    redirect_to @project, notice: "Project was successfully updated."
+  else
+    @users = User.order(:name)
+    render :edit, status: :unprocessable_entity
+  end
+end
+
+
+
+  private
+
+  def notify_project_users
+    @project.users.each do |user|
+      next if user == current_user
+      Notification.create(
+        recipient_id: user.id,
+        message: "The project '#{@project.name}' has been updated by #{current_user.name}."
+      )
     end
   end
 

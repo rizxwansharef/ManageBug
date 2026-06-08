@@ -6,7 +6,11 @@ Rails.application.routes.draw do
   end
   get "home", to: "pages#home"
   root "pages#home"
-  resources :projects
+  resources :projects do
+    member do
+      get :available_users
+    end
+  end
   resources :bugs do
     member do
       get "assign_developer"

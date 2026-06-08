@@ -26,31 +26,46 @@
 					<%= @project.manager&.name.to_s.first&.upcase || "U" %>
 				</div>
 			<% end %>
+				<%=@project.manager.name %>
+
 		</div>
+	</div>
+
+	<div class="row mb-5" style="background-color: #f8f9fa; padding: 1.5rem; border-radius: 0.5rem;">
 
 		<% if @project.users.any? %>
 			<div class="col">
 				<h5 class="text-uppercase text-muted" style="font-size: 0.8rem; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 0.8rem;">Assigned people</h5>
-				<div class="avatar-stack">
+				<ul class="list-unstyled d-flex flex-column gap-2">
 					<% @project.users.order(:name).each do |user| %>
+						<li class="d-flex align-items-center gap-3">
 						<% if user.profile_picture.attached? %>
-							<div class="avatar-stack__item" style="width: 48px; height: 48px;" title="<%= user.name %>" data-bs-toggle="tooltip">
-								<%= image_tag user.profile_picture, alt: user.name %>
+							<div class="rounded-circle overflow-hidden flex-shrink-0" style="width: 48px; height: 48px;">
+							<%= image_tag user.profile_picture, alt: user.name, class: "w-100 h-100 object-fit-cover" %>
 							</div>
 						<% else %>
-							<div class="avatar-stack__item" style="width: 48px; height: 48px;" title="<%= user.name %>" data-bs-toggle="tooltip">
-								<%= user.name.to_s.first&.upcase || "U" %>
+							<div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center fw-bold flex-shrink-0" style="width: 48px; height: 48px;">
+							<%= user.name.to_s.first&.upcase || "U" %>
 							</div>
 						<% end %>
+						<span class="fw-medium text-dark"><%= user.name %></span>
+
+						</li>
 					<% end %>
-				</div>
+				</ul>
+
 			</div>
 		<% end %>
 	</div>
 
 	<div class="mb-3 pt-4 border-top">
 		<%= link_to 'Edit', edit_project_path(@project), class: 'btn btn-outline-secondary app-btn me-2' if manager? && @project.manager_id == current_user.id %>
-		<%= link_to 'Delete', project_path(@project), data: { turbo_method: :delete, turbo_confirm: 'Delete project?' }, class: 'btn btn-outline-danger app-btn me-2' if manager? && @project.manager_id == current_user.id %>
+		<% if can? :destroy, @project %>
+			<%= link_to 'Delete', project_path(@project), data: { turbo_method: :delete, turbo_confirm: 'Delete Project?' }, class: 'btn btn-outline-danger app-btn' %>
+		<% end %>
+		<% if @project.bugs.any?%>
 		<%= link_to 'View Bugs', bugs_path + "?project_id=#{@project.id}", class: 'btn btn-primary app-btn me-2' %>
+		<%end%>
+		<%= link_to 'Back', projects_path , class: 'btn btn-outline-secondary app-btn me-2'%>
 	</div>
 </div>

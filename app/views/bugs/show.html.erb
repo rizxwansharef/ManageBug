@@ -30,31 +30,38 @@
 			<%= image_tag @bug.screenshot, class: 'img-fluid rounded shadow-sm border', style: 'max-height:320px;object-fit:contain;' %>
 		</div>
 	<% end %>
+	
 
-	<div class="row mb-4 text-muted">
+	
+	<div class="mb-4" style="background-color: #f8f9fa; padding: 1.5rem; border-radius: 0.5rem;">
 		<div class="col-auto me-4">
-			<h5 class="text-uppercase text-muted" style="font-size: 0.8rem; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 0.8rem;">QA</h5>
+			<h5 class="text-uppercase text-muted" style="font-size: 0.8rem; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 0.8rem;">Assigned QA</h5>
+			<%=@bug.assignee_qa.name %>
 			<% if @bug.assignee_qa&.profile_picture&.attached? %>
 				<%= image_tag @bug.assignee_qa.profile_picture, class: 'rounded-circle shadow-sm', style: 'width:48px;height:48px;object-fit:cover;', title: @bug.assignee_qa.name, data: { bs_toggle: "tooltip" } %>
 			<% else %>
-				<div class="rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width:48px;height:48px; background-color: #d9e3f5; color: #28436f; font-weight: 700;" title="<%= @bug.assignee_qa&.name %>" data-bs-toggle="tooltip">
+				<div class="rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width:48px;height:48px; background-color: #d9e3f5; color: #28436f; font-weight: 700;" title="<%= @bug.assignee_qa.name %>" data-bs-toggle="tooltip">
 					<%= @bug.assignee_qa&.name.to_s.first&.upcase || "U" %>
-				</div>
-			<% end %>
-		</div>
-
-		<div class="col">
-			<h5 class="text-uppercase text-muted" style="font-size: 0.8rem; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 0.8rem;">Developer</h5>
-			<% if @bug.assignee_dev&.profile_picture&.attached? %>
-				<%= image_tag @bug.assignee_dev.profile_picture, class: 'rounded-circle shadow-sm', style: 'width:48px;height:48px;object-fit:cover;', title: @bug.assignee_dev.name, data: { bs_toggle: "tooltip" } %>
-			<% else %>
-				<div class="rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width:48px;height:48px; background-color: #d9e3f5; color: #28436f; font-weight: 700;" title="<%= @bug.assignee_dev&.name || 'Unassigned' %>" data-bs-toggle="tooltip">
-					<%= @bug.assignee_dev&.name.to_s.first&.upcase || "?" %>
 				</div>
 			<% end %>
 		</div>
 	</div>
 
+	<div class="mb-4" style="background-color: #f8f9fa; padding: 1.5rem; border-radius: 0.5rem;">
+		<div class="col-auto me-4">
+			<h5 class="text-uppercase text-muted" style="font-size: 0.8rem; letter-spacing: 0.05em; font-weight: 700; margin-bottom: 0.8rem;">Assigned DEV</h5>
+			<%=@bug.assignee_dev.name %>
+			<% if @bug.assignee_dev&.profile_picture&.attached? %>
+				<%= image_tag @bug.assignee_qa.profile_picture, class: 'rounded-circle shadow-sm', style: 'width:48px;height:48px;object-fit:cover;', title: @bug.assignee_dev.name, data: { bs_toggle: "tooltip" } %>
+			<% else %>
+				<div class="rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width:48px;height:48px; background-color: #d9e3f5; color: #28436f; font-weight: 700;" title="<%= @bug.assignee_dev.name %>" data-bs-toggle="tooltip">
+					<%= @bug.assignee_dev&.name.to_s.first&.upcase || "U" %>
+				</div>
+			<% end %>
+		</div>
+	</div>
+
+	
 	<div class="mb-3 pt-4 border-top">
 		<% if can? :change_status, @bug %>
 			<%= form_with url: change_status_bug_path(@bug), method: :patch, data: { turbo: true }, local: false do |f| %>

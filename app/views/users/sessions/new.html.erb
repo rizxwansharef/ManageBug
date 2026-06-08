@@ -10,8 +10,7 @@
       <h2>Login</h2>
       <p class="auth-subtitle">PLease enter your login details</p>
 
-      
-
+    
       <%= render "registrations/error_messages", resource: resource %>
 
       <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "auth-form", multipart: true }) do |f| %>
@@ -35,11 +34,15 @@
         <div class="d-flex gap-2 flex-wrap">
           <%= f.submit "Log In", class: "btn btn-primary auth-submit auth-submit--inline" %>
         </div>
+         <div class="auth-footer">
+          <%= link_to 'Forgot your password?', new_user_password_path %>
+        </div>
       <% end %>
 
       <div class="auth-footer">
         <span>Don't have an account?</span>
         <%= link_to "Create account", select_role_path %>
+    
       </div>
     </div>
   </div>

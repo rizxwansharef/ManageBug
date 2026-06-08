@@ -14,7 +14,7 @@
 
 	<div class="mb-3">
 		<%= f.label :name %>
-		<%= f.text_field :name, class: 'form-control' %>
+		<%= f.text_field :name, class: 'form-control',required: true %>
 	</div>
 
 	<div class="mb-3">
@@ -56,6 +56,6 @@
 
 	<div class="mb-3">
 		<%= f.submit class: 'btn btn-primary' %>
-		<%= link_to 'Back', projects_path, class: 'btn btn-link' %>
+		<%= link_to 'Back', project_path(@project), class: 'btn btn-link' %>
 	</div>
 <% end %>

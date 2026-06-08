@@ -9,6 +9,10 @@ class ApplicationController < ActionController::Base
   stale_when_importmap_changes
   helper_method :manager?, :developer?,  :qa?
 
+  rescue_from CanCan::AccessDenied do |exception|
+    redirect_back fallback_location: projects_path, alert: "You are not authorized to perform this action."
+  end
+
   def manager?
     current_user&.role == "manager"
   end

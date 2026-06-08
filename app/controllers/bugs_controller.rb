@@ -15,11 +15,20 @@ class BugsController < ApplicationController
     else
       project_scope = manager? ? Project.where(manager_id: current_user.id) : current_user.projects
       @bugs = Bug.where(project: project_scope).distinct.order(created_at: :desc)
+      @new_bug = Bug.new
+      if current_user.projects.any?
+        @available_qas = User.joins(:projects).where(role: "qa", projects: { id: current_user.projects.pluck(:id) }).distinct
+        @available_devs = User.joins(:projects).where(role: "developer", projects: { id: current_user.projects.pluck(:id) }).distinct
+      else
+        @available_qas = User.none
+        @available_devs = User.none
+      end
     end
   end
 
 
   def show
+    authorize! :read, @bug
   end
 
   def new
@@ -37,23 +46,27 @@ class BugsController < ApplicationController
         )
       redirect_to bugs_path(project_id: @bug.project_id), notice: "Bug was successfully created."
     else
-
       render :index, status: :unprocessable_entity
     end
   end
 
   def edit
+    redirect_to bug_path(@bug), alert: "You cant prform this action here ."
   end
 
+
+
   def update
+    authorize! :update, @bug
     if @bug.update(bug_params)
       redirect_back fallback_location: @bug, notice: "Bug was successfully updated."
     else
-      redirect_back fallback_location: edit_bug_path(@bug), alert: @bug.errors.full_messages.to_sentence
+      redirect_back fallback_location: edit_bug_path(@bug), alert: "you cant do this "
     end
   end
 
   def destroy
+    authorize! :destroy, @bug
     @bug.destroy
     redirect_to bugs_path, notice: "Bug was successfully deleted."
   end
@@ -97,7 +110,10 @@ class BugsController < ApplicationController
   private
 
   def set_bug
-    @bug = Bug.find(params[:id])
+    @bug = Bug.find_by(id: params[:id])
+    unless @bug
+      redirect_to bugs_path, alert: "Bug not found."
+    end
   end
 
 

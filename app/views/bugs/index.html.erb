@@ -13,7 +13,7 @@
 			</div>
 		</div>
 
-		<% if can?(:create, Bug) && @selected_project.present? %>
+		<% if can?(:create, Bug) && (@selected_project.present? || current_user.projects.any?) %>
 			<button class="btn btn-primary app-btn" data-bs-toggle="modal" data-bs-target="#newBugModal" type="button">+ New Task bug</button>
 		<% end %>
 	</div>
@@ -109,8 +109,8 @@
 									<% end %>
 									<% if can? :update, bug %>
 										<% if (can? :change_status, bug) || (can? :destroy, bug) %><hr class="dropdown-divider my-2"><% end %>
-										<a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editBugModal_<%= bug.id %>">Edit</a>
-									<% end %>
+										<a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editBugModal_<%= bug.id %>"onclick="document.querySelectorAll('.modal-backdrop').forEach(el => el.remove()); document.body.style.overflow = 'auto';">Edit</a>
+										<% end %>
 									<% unless (can? :change_status, bug) || (can? :destroy, bug) || (can? :update, bug) %>
 										<p class="text-muted small mb-0">No actions available</p>
 									<% end %>
@@ -128,7 +128,7 @@
 	</div>
 </div>
 
-<% if can?(:create, Bug) && @selected_project.present? %>
+<% if can?(:create, Bug) && (@selected_project.present? || current_user.projects.any?) %>
 	<div class="modal fade" id="newBugModal" tabindex="-1" aria-labelledby="newBugModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered app-modal app-modal--bug">
 			<div class="modal-content">
@@ -139,13 +139,21 @@
 
 				<div class="modal-body pt-0">
 					<%= form_with(model: @new_bug, url: bugs_path, local: true, multipart: true) do |f| %>
-						<%= f.hidden_field :project_id, value: @selected_project.id %>
+						<% if @selected_project.present? %>
+							<%= f.hidden_field :project_id, value: @selected_project.id %>
+						<% else %>
+							<div class="mb-3">
+							<%= f.label :project_id, "Select Project", class: "form-label mb-1 fw-bold" %>
+  							<%= f.collection_select :project_id, current_user.projects, :id, :name, { prompt: "Choose a project" }, { class: "form-select app-input", required: true, onchange: "let frame = document.getElementById('available_users_frame'); if(this.value) { frame.src = '/projects/' + this.value + '/available_users'; } else { frame.innerHTML = '<div class=\"row\"><div class=\"col-md-6 mb-3\"><label class=\"form-label mb-1 fw-bold\">Assign Dev</label><div class=\"assign-list shadow-sm p-3 text-muted small\">Please select a project first.</div></div><div class=\"col-md-6 mb-3\"><label class=\"form-label mb-1 fw-bold\">Assign QA</label><div class=\"assign-list shadow-sm p-3 text-muted small\">Please select a project first.</div></div></div>'; }" } %>
+				</div>
+
+						<% end %>
 
 							<div class="row">
 								<div class="col-md-6 mb-3">
 									<label class="form-label mb-1 fw-bold">Assign Dev</label>
 									<div class="assign-list shadow-sm" style="max-height: 160px; overflow-y: auto;">
-										<%= f.collection_radio_buttons :assignee_dev_id, @available_devs, :id, :name do |b| %>
+										<%= f.collection_radio_buttons :assignee_dev_id, @available_devs, :id, :name, {}, { required: true } do |b| %>
 											<% user = b.object %>
 											<label class="assign-list__item border-bottom mb-0">
 												<div class="assign-list__avatar">
@@ -164,8 +172,8 @@
 								<div class="col-md-6 mb-3">
 									<label class="form-label mb-1 fw-bold">Assign QA</label>
 									<div class="assign-list shadow-sm" style="max-height: 160px; overflow-y: auto;">
-										<%= f.collection_radio_buttons :assignee_qa_id, @available_qas, :id, :name do |b| %>
-											<% user = b.object %>
+										<%= f.collection_radio_buttons :assignee_qa_id, @available_qas, :id, :name, {}, { required: true } do |b| %>
+											<% user = b.object%>
 											<label class="assign-list__item border-bottom mb-0">
 												<div class="assign-list__avatar">
 													<% if user.profile_picture.attached? %>
@@ -189,23 +197,24 @@
 
 						<div class="mb-3 mt-2">
 							<%= f.label :title, "Bug title", class: "form-label" %>
-							<%= f.text_field :title, class: "form-control app-input app-input--title", placeholder: "Add title here" %>
+							<%= f.text_field :title, class: "form-control app-input app-input--title", placeholder: "Add title here", required: true %>
 						</div>
 
 						<div class="mb-3">
 							<%= f.label :description, "Bug details", class: "form-label" %>
-							<%= f.text_area :description, rows: 2, class: "form-control app-input", placeholder: "Add here" %>
+							<%= f.text_area :description, rows: 2, class: "form-control app-input", placeholder: "Add here", required: true %>
 						</div>
 
 						<div class="upload-dropzone mb-3">
 							<%= f.label :screenshot, class: "upload-dropzone__label" do %>
 								<i class="bi bi-cloud-arrow-up"></i>
-								Drop any file here or <span>browse</span>
+								Select Image <span>browse</span>
 							<% end %>
 							<%= f.file_field :screenshot, class: "d-none" %>
 						</div>
 
 						<div class="modal-footer border-0 pt-2 px-0">
+						
 							<%= f.submit "Add", class: "btn btn-primary app-btn px-4" %>
 						</div>
 					<% end %>

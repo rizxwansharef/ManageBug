@@ -20,7 +20,9 @@ class Ability
       can :read, Project do |project|
         project.users.include?(user)
       end
-
+      can :read, Bug do |bug|
+        bug.project.users.include?(user)
+      end
       can :create, Bug, project_id: user.project_ids
       can [ :update, :destroy ], Bug do |bug|
         bug.reporter_id == user.id
