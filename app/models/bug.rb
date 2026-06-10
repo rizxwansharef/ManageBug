@@ -15,7 +15,19 @@ class Bug < ApplicationRecord
   validates :status, presence: true
   validate :acceptable_image
 
+
+
+  def status_options
+    if bug_type == "bug"
+      [ "open", "started", "resolved" ]
+    else
+      [ "open", "started", "completed" ]
+    end
+  end
+
   private
+
+
 
   def acceptable_image
     return unless screenshot.attached?

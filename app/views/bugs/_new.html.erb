@@ -1,0 +1,13 @@
+<div class="modal fade" id="newBugModal" tabindex="-1" aria-labelledby="newBugModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered app-modal app-modal--bug">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h2 class="modal-title app-modal__title" id="newBugModalLabel">New bug</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body pt-0">
+        <%= render "bugs/edit_form", bug: @new_bug || Bug.new(project: local_assigns[:project]) %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,5 +1,5 @@
 class ProjectsController < ApplicationController
-  before_action :set_project, only: %i[show  update destroy edit ]
+  before_action :set_project, only: %i[show update destroy edit ]
   before_action :blocked_routes, only: %i[new ]
 
   def index
@@ -11,11 +11,8 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    if set_project && (set_project.manager_id == current_user.id || set_project.users.include?(current_user))
-      @project = set_project
-    else
-      redirect_to projects_path, alert: "Project not found or access denied."
-    end
+    authorize! :read, @project
+    @selected_project = @project
   end
 
 
@@ -41,10 +38,7 @@ class ProjectsController < ApplicationController
   end
 
   def edit
-    if @project.manager_id != current_user.id
-      redirect_to project_path(@project), alert: "You are not authorized to edit this project."
-    
-    end
+    authorize! :update, @project
   end
 
   def update
@@ -55,7 +49,7 @@ class ProjectsController < ApplicationController
     blocked_ids = Bug.where(project_id: @project.id)
                      .where("reporter_id IN (?) OR assignee_qa_id IN (?) OR assignee_dev_id IN (?)", removed_ids, removed_ids, removed_ids)
                      .pluck(:reporter_id, :assignee_qa_id, :assignee_dev_id)
-                     .flatten.uniq & removed_ids 
+                     .flatten.uniq & removed_ids
 
     if blocked_ids.present?
       blocked_names = User.where(id: blocked_ids).pluck(:name).join(", ")
@@ -99,15 +93,12 @@ end
 
   def project_params
     params.require(:project).permit(:name, :description, :avatar, user_ids: [])
-
   end
   def blocked_routes
     if !manager?
       redirect_to projects_path, alert: "You are not authorized to perform this action."
-    else 
+    else
       redirect_to projects_path, alert: "You cant prform this action here ."
-    end 
-    
-  end 
-  
+    end
+  end
 end

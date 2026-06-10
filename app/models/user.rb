@@ -14,23 +14,23 @@ class User < ApplicationRecord
   :recoverable, :rememberable, :validatable
   has_one_attached :profile_picture
   validate :acceptable_image
-  
-  validates :email, 
-            presence: true, 
+
+  validates :email,
+            presence: true,
             uniqueness: { case_sensitive: false },
-            format: { 
-              with: /\A[^@\s]+@[^@\s]+\.com\z/, 
-              message: "must contain '@' and end with '.com'" 
+            format: {
+              with: /\A[^@\s]+@[^@\s]+\.com\z/,
+              message: "must contain '@' and end with '.com'"
             }
-  validates :password, 
-            presence: true, 
+  validates :password,
+            presence: true,
             on: :create
-  validates :password, 
-            presence: true, 
-            length: { minimum: 8 }, 
-            format: { 
-              with: /\A(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}\z/, 
-              message: "must include at least one uppercase letter and one special character" 
+  validates :password,
+            presence: true,
+            length: { minimum: 8 },
+            format: {
+              with: /\A(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}\z/,
+              message: "must include at least one uppercase letter and one special character"
             },
             if: -> { password.present? }
 

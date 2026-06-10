@@ -1,0 +1,8 @@
+<div class="mb-3" id="<%= dom_id(bug, :status_container) %>">
+  <% if can? :change_status, bug %>
+    <%= fields_for :bug, bug do |f| %>
+      <%= f.label :status, "Bug Status", class: "form-label" %>
+      <%= f.select :status, options_for_select(bug.status_options, bug.status), {}, { class: "form-select app-input" } %>
+    <% end %>
+  <% end %>
+</div>
