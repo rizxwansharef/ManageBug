@@ -13,6 +13,7 @@ class Ability
         bug.project.manager_id == user.id
       end
       cannot [ :create, :update, :destroy ], Bug
+      cannot [ :change_status] , Bug 
 
 
 
@@ -30,7 +31,8 @@ class Ability
       cannot [ :update, :destroy ], Bug do |bug|
         bug.reporter_id != user.id
       end
-      cannot [ :create, :update, :destroy ], Project
+      cannot [ :create, :update, :destroy, :edit ],Project
+      
 
 
 
@@ -38,11 +40,13 @@ class Ability
       can :read, Project do |project|
         project.users.include?(user)
       end
-
+      can :read, Bug do |bug|
+        bug.project.users.include?(user)
+      end
       can :change_status, Bug, assignee_dev_id: user.id
 
-      cannot [ :create, :destroy ], Bug
-      cannot [ :create, :update, :destroy ], Project
+      cannot [ :create, :destroy , :edit ,:update ], Bug
+      cannot [ :create, :update, :destroy , :edit ], Project
     end
   end
 end

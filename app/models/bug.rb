@@ -9,11 +9,10 @@ class Bug < ApplicationRecord
   validates :project_id, presence: true
   validates :assignee_dev_id, presence: true
   validates :assignee_qa_id, presence: true
-
-    validates :title, presence: true, uniqueness: { scope: :project_id }
-    validates :description, presence: true
-    validates :status, inclusion: { in: %w[open in_progress resolved] }
-
+  validates :title, presence: true, uniqueness: { scope: :project_id, message: "must be unique within the same project" }
+  validates :description, presence: true
+  validates :bug_type, presence: true, inclusion: { in: %w[bug feature] }
+  validates :status, presence: true
   validate :acceptable_image
 
   private

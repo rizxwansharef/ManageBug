@@ -1,5 +1,6 @@
 class ProjectsController < ApplicationController
-  before_action :set_project, only: %i[show edit update destroy]
+  before_action :set_project, only: %i[show  update destroy edit ]
+  before_action :blocked_routes, only: %i[new ]
 
   def index
     if manager?
@@ -19,8 +20,6 @@ class ProjectsController < ApplicationController
 
 
   def new
-    @project = Project.new
-    @users = User.order(:name)
   end
 
   def create
@@ -42,7 +41,10 @@ class ProjectsController < ApplicationController
   end
 
   def edit
-    @users = User.order(:name)
+    if @project.manager_id != current_user.id
+      redirect_to project_path(@project), alert: "You are not authorized to edit this project."
+    
+    end
   end
 
   def update
@@ -70,7 +72,10 @@ class ProjectsController < ApplicationController
   end
 end
 
-
+  def destroy
+    @project.destroy
+    redirect_to projects_path, notice: "Project was successfully deleted."
+  end
 
   private
 
@@ -84,17 +89,9 @@ end
     end
   end
 
-  def destroy
-    @project.destroy
-    redirect_to projects_path, notice: "Project was successfully deleted."
-  end
-
   def assign_users
     @project = Project.find(params[:id])
   end
-
-
-  private
 
   def set_project
     @project = Project.find(params[:id])
@@ -102,5 +99,15 @@ end
 
   def project_params
     params.require(:project).permit(:name, :description, :avatar, user_ids: [])
+
   end
+  def blocked_routes
+    if !manager?
+      redirect_to projects_path, alert: "You are not authorized to perform this action."
+    else 
+      redirect_to projects_path, alert: "You cant prform this action here ."
+    end 
+    
+  end 
+  
 end

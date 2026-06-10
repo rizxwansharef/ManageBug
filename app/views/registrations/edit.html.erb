@@ -6,10 +6,10 @@
   <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, multipart: true }) do |f| %>
     <div class="mb-3">
       <%= f.label :name, class: "form-label" %>
-      <%= f.text_field :name, autofocus: true, autocomplete: "name", class: "form-control",required: true %>
+      <%= f.text_field :name, autofocus: true, autocomplete: "name", class: "form-control" %>
     </div>
 
-    div class="mb-3">
+    <div class="mb-3">
           <%= f.label :email, class: "form-label auth-label" %>
           <%= f.email_field :email, 
                            autocomplete: "email", 
@@ -17,9 +17,9 @@
                     required: true,
                     pattern: "^[^@\s]+@[^@\s]+\\.com$",
                     title: "Enter valid email adress " %>
-        </div>
+    </div>
 
-        <div class="mb-3">
+    <div class="mb-3">
           <%= f.label :password, class: "form-label auth-label" %>
           <%= f.password_field :password, 
                               autocomplete: "new-password", 
@@ -28,7 +28,7 @@
                               pattern: "^(?=.*[A-Z])(?=.*[^A-Za-z0-9]).{8,}$",
                               title: "Must be at least 8 characters long, contain at least 1 uppercase letter, and 1 special character." %>
           <div class="auth-hint">Minimum 8 characters, 1 uppercase letter, 1 special character.</div>
-        </div>
+    </div>
 
     <div class="mb-3">
       <%= f.label :password_confirmation, class: "form-label" %>
@@ -41,5 +41,7 @@
     </div>
 
     <%= f.submit "Update", class: "btn btn-primary" %>
-  <% end %>
+    <button class="btn btn-sm btn-outline-secondary" onclick="history.back()">Cancel</button>
+
+    <% end %>
 </div>

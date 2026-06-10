@@ -10,6 +10,12 @@
 			<span class="badge bg-secondary align-middle"><%= @bug.project&.name %></span>
 		
 		</div>
+
+		<div class="mb-4 text-muted" style="font-size: 1.05rem; line-height: 1.6; background-color: #f8f9fa; padding: 1.5rem; border-radius: 0.5rem;">
+			<p>Bug Type:</p>
+			<span class="badge bg-secondary align-middle"><%= @bug.bug_type %></span>
+		
+		</div>
 		
 		<div class="mb-4 text-muted" style="font-size: 1.05rem; line-height: 1.6; background-color: #f8f9fa; padding: 1.5rem; border-radius: 0.5rem;">
 			<p>Bug Status:</p>
@@ -126,25 +132,7 @@
 									<% end %>
 								</div>
 							</div>
-							<div class="col-md-6 mb-3">
-								<label class="form-label mb-1 fw-bold">Assign QA</label>
-								<div class="assign-list shadow-sm" style="max-height: 160px; overflow-y: auto;">
-									<%= f.collection_radio_buttons :assignee_qa_id, project_qas, :id, :name do |b| %>
-										<% user = b.object %>
-										<label class="assign-list__item border-bottom mb-0" for="show_edit_bug_<%= @bug.id %>_assignee_qa_id_<%= user.id %>">
-											<div class="assign-list__avatar">
-												<% if user.profile_picture.attached? %>
-													<%= image_tag user.profile_picture, alt: user.name %>
-												<% else %>
-													<span><%= user.name.to_s.first&.upcase || "U" %></span>
-												<% end %>
-											</div>
-											<span class="assign-list__name"><%= user.name %></span>
-											<%= b.radio_button class: 'form-check-input ms-auto', id: "show_edit_bug_#{@bug.id}_assignee_qa_id_#{user.id}" %>
-										</label>
-									<% end %>
-								</div>
-							</div>
+							
 							<div>
 								<%= f.label :deadline, "Due date", class: "form-label mb-1" %>
 								<%= f.date_field :deadline, class: "form-control app-input" %>
@@ -158,6 +146,8 @@
 							<%= f.label :description, "Bug details", class: "form-label" %>
 							<%= f.text_area :description, rows: 2, class: "form-control app-input", placeholder: "Add here" %>
 						</div>
+
+						
 
 						<div class="upload-dropzone mb-3">
 							<%= f.label :screenshot, class: "upload-dropzone__label" do %>
