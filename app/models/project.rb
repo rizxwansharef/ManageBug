@@ -23,7 +23,7 @@ class Project < ApplicationRecord
 
   def manager_must_have_manager_role
     return if manager.blank?
-    unless manager.role == "manager"
+    unless manager.manager?
       errors.add(:manager, "must have role manager")
     end
   end

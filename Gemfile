@@ -74,3 +74,5 @@ end
 
 gem "devise", "~> 5.0"
 gem "pry"
+gem "activerecord-postgres_enum"
+

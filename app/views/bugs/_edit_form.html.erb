@@ -15,7 +15,7 @@
     <%= turbo_frame_tag "bug_assignees_frame_#{bug.id || 'new'}" do %>
       <% current_project_id = bug.project_id || @selected_project&.id || params[:project_id] %>
       <% if current_project_id.present? %>
-        <% project_devs = User.joins(:projects).where(role: "developer", projects: { id: current_project_id }).distinct.order(:name) %>
+        <% project_devs = User.developer.joins(:projects).where(projects: { id: current_project_id }).distinct.order(:name) %>
         <div class="row">
           <div class="col-md-6 mb-3">
             <label class="form-label mb-1 fw-bold">Assign Dev</label>

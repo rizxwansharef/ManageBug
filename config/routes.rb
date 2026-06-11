@@ -6,16 +6,14 @@ Rails.application.routes.draw do
   end
   get "home", to: "pages#home"
   root "pages#home"
-  resources :projects do
-    member do
-      get :available_users
-    end
-  end
-  resources :bugs do
+  resources :projects, except: [ :new  ]
+
+  resources :bugs, except: [ :new, :edit  ] do
     member do
       patch "change_status"
     end
   end
   get "notifications", to: "notifications#index", as: "notifications"
   patch "notifications/mark_all_as_read", to: "notifications#mark_all_as_read", as: "mark_all_as_read_notifications"
+  match "*unmatched", to: "application#not_found", via: :all
 end

@@ -38,18 +38,6 @@ class BugsControllerTest < ActionDispatch::IntegrationTest
     assert_response :redirect
   end
 
-  def test_qa_cannot_access_edit_route
-    sign_in @qa
-    get edit_bug_path(@bug)
-    assert_redirected_to projects_path
-  end
-
-  def test_developer_cannot_access_edit_route
-    sign_in @developer
-    get edit_bug_path(@bug)
-    assert_redirected_to projects_path
-  end
-
   def test_developer_cannot_update_feature_bug_to_resolved_status
     sign_in @developer
     patch bug_path(@bug), params: { bug: { status: "resolved" }, commit: "Save" }

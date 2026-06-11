@@ -13,24 +13,30 @@ class ApplicationController < ActionController::Base
     redirect_back fallback_location: projects_path, alert: "You are not authorized to perform this action."
   end
 
+  def not_found
+    render file: Rails.public_path.join("404.html"), status: :not_found, layout: false
+  end
+
   def manager?
-    current_user&.role == "manager"
+    current_user&.manager?
   end
 
   def developer?
-    current_user&.role == "developer"
+    current_user&.developer?
   end
 
   def qa?
-    current_user&.role == "qa"
+    current_user&.qa?
   end
 
   def after_sign_in_path_for(resource)
     projects_path
   end
+
   def after_sign_up_path_for(resource)
     projects_path
   end
+
   def after_sign_out_path_for(resource)
     new_user_session_path
   end

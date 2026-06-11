@@ -3,10 +3,18 @@
     <a class="navbar-brand fw-bold" href="<%= projects_path %>" style="font-size: 1.5rem; color: #000;">
       ManageBug
     </a>
-
     <div class="d-flex align-items-center">
-      <%= link_to 'Projects', projects_path , class: 'me-2 fw-bold', style: 'color: #000; text-decoration: none;padding-right:4rem'; %>
-      <%= link_to 'Bugs', bugs_path, class: 'me-3 fw-bold', style: 'color: #000; text-decoration: none; padding-right:4rem';%>
+      <%= link_to 'Projects', projects_path , class: 'me-2 fw-bold', style: 'color: #000; text-decoration: none;padding-right:1rem'; %>
+      <div class="dropdown" , style="padding-right :20px">
+        <a class="btn btn-bold dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"; > Bugs</a>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <% Bug.order(id: :desc).limit(5).each do |bug| %>
+            <li><%= link_to bug.title, bug_path(bug), class: "dropdown-item" %></li>
+          <% end %>
+          <li><hr class="dropdown-divider"></li>
+          <li><%= link_to "All Bugs",  bugs_path, class: "dropdown-item" %></li>
+        </ul>
+      </div>
       <%= link_to notifications_path, class: 'me-3' do %>
         <i class="bi bi-bell" style="font-size: 1.2rem; color: #000;"></i>
       <% end %>
