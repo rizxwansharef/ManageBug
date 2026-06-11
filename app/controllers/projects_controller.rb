@@ -42,6 +42,7 @@ class ProjectsController < ApplicationController
   end
 
   def update
+    authorize! :update, @project
   submitted_ids = Array(project_params[:user_ids]).map(&:to_i)
   removed_ids = @project.user_ids - submitted_ids
 
@@ -67,6 +68,7 @@ class ProjectsController < ApplicationController
 end
 
   def destroy
+    authorize! :destroy, @project
     @project.destroy
     redirect_to projects_path, notice: "Project was successfully deleted."
   end

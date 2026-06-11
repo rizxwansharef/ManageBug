@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   validates :name, presence: true
   validates :email, presence: true
+  validates :role, presence: true, inclusion: { in: %w[ manager developer qa] }
   has_many :project_assignments
   has_many :projects, through: :project_assignments
   has_many :reported_bugs, class_name: "Bug", foreign_key: "reporter_id"

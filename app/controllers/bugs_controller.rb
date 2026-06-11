@@ -64,8 +64,8 @@ class BugsController < ApplicationController
       @new_bug = @bug
       @new_bug.assignee_qa_id = current_user.id
       @available_devs = @selected_project ? users_for_project("developer", @selected_project) : User.none
-      if @bug.errors[:title].any?
-        flash.now[:alert] = "Bug name must be unique within the selected project."
+      if @bug.errors.any?
+        flash.now[:alert] = @bug.errors.full_messages.to_sentence
       end
       render :index, status: :unprocessable_entity
     end
@@ -154,7 +154,7 @@ class BugsController < ApplicationController
     allowed_fields = if developer?
       [ :status ]
     else
-      [ :title, :description, :bug_type, :status, :assignee_dev_id, :screenshot, :deadline ]
+      [ :project_id, :title, :description, :bug_type, :status, :assignee_dev_id, :screenshot, :deadline ]
     end
 
     params.require(:bug).permit(allowed_fields)

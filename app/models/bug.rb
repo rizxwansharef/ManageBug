@@ -13,7 +13,9 @@ class Bug < ApplicationRecord
   validates :description, presence: true
   validates :bug_type, presence: true, inclusion: { in: %w[bug feature] }
   validates :status, presence: true
+  validate :status_must_match_bug_type
   validate :acceptable_image
+
 
 
 
@@ -27,7 +29,16 @@ class Bug < ApplicationRecord
 
   private
 
+  
 
+
+
+  def status_must_match_bug_type
+    return if bug_type.blank? || status.blank?
+    return if status_options.include?(status)
+
+    errors.add(:status, "is not valid for #{bug_type}")
+  end
 
   def acceptable_image
     return unless screenshot.attached?
